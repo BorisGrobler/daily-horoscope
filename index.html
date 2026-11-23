@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10121e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Horoskop">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Moj dnevni horoskop</title>
+<style>
+:root{color-scheme:dark;--bg:#10121e;--panel:#191c2b;--panel2:#202438;--gold:#e5c47b;--muted:#b5b8ca;--text:#f6f4ef;--line:#33374c}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#292742 0,#10121e 48%);color:var(--text);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+main{max-width:760px;margin:auto;padding:22px 16px calc(32px + env(safe-area-inset-bottom))}
+header{text-align:center;padding:12px 8px 20px}
+.eyebrow{letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-size:.76rem}
+h1{font-size:clamp(1.8rem,7vw,2.5rem);line-height:1.15;margin:.45rem 0}
+.date{color:var(--muted);margin:0}
+.card{background:linear-gradient(145deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:20px;padding:18px;margin:12px 0;box-shadow:0 8px 26px #0002}
+h2{font-size:1.15rem;margin:0 0 10px;color:var(--gold)}
+h3{font-size:1rem;margin:12px 0 4px}
+p{margin:.45rem 0}
+.big3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pill{border:1px solid #48445e;border-radius:14px;padding:12px 8px;text-align:center;background:#17192a}
+.pill b{display:block;color:var(--gold);font-size:.9rem}
+.pill span{font-size:.82rem;color:var(--muted)}
+.numbers{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:14px 0}
+.num{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#34314b;border:1px solid var(--gold);font-weight:700;color:#fff}
+.bonus{color:var(--gold);text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{padding:12px;border-radius:14px;background:#141727;border:1px solid var(--line)}
+.tile small{display:block;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:.78rem;padding:12px}
+.status{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted);font-size:.75rem;margin-top:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:#76d6a0}
+@media(max-width:430px){main{padding:14px 12px 28px}.card{padding:15px;border-radius:17px}.grid{grid-template-columns:1fr}.big3{gap:5px}.pill{padding:10px 5px}.pill span{font-size:.75rem}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="eyebrow">Osebni astrološki dnevnik</div>
+<h1>✨ Moj dnevni horoskop</h1>
+<p class="date" id="today"></p>
+<div class="status"><span class="dot"></span><span id="status">Pripravljeno</span></div>
+</header>
+<section class="card">
+<h2>🌟 Moja rojstna osnova</h2>
+<div class="big3">
+<div class="pill"><b>☀️ Bik</b><span>Sonce</span></div>
+<div class="pill"><b>🌙 Oven*</b><span>Luna</span></div>
+<div class="pill"><b>⬆️ Rak*</b><span>Ascendent</span></div>
+</div>
+<p style="color:var(--muted);font-size:.82rem">Rojstvo: 1. 5. 1981, 09:05 · Ljubljana. *Postavitve so približne; za popolno natančnost jih je treba preveriti z astrološkim izračunom.</p>
+</section>
+<section class="card">
+<h2>🔮 Sporočilo dneva</h2>
+<p id="daily"></p>
+<h3>❤️ Ljubezen in odnosi</h3><p id="love"></p>
+<h3>💼 Kariera in finance</h3><p id="work"></p>
+<h3>🌿 Počutje in energija</h3><p id="well"></p>
+<h3>✨ Dnevna misel</h3><p id="thought"></p>
+</section>
+<section class="card">
+<h2>🍀 Srečne številke</h2>
+<div class="numbers" id="numbers"></div>
+<p class="bonus">Dodatna številka: <strong id="bonus"></strong></p>
+</section>
+<section class="card">
+<h2>🌈 Dnevni simboli</h2>
+<div class="grid">
+<div class="tile"><small>Srečna barva</small><strong id="color"></strong></div>
+<div class="tile"><small>Srečna ura</small><strong id="hour"></strong></div>
+<div class="tile"><small>Usmeritev</small><strong id="focus"></strong></div>
+<div class="tile"><small>Element</small><strong>Zemlja · stabilnost</strong></div>
+</div>
+</section>
+<footer>Astrologija in numerologija sta namenjeni zabavi in osebnemu razmisleku, ne znanstvenim napovedim.</footer>
+</main>
+<script>
+const readings=[
+{daily:"Danes se osredotoči na miren, premišljen napredek. Ni treba rešiti vsega naenkrat; majhen korak v pravo smer je dovolj.",love:"Bodi iskren, a ne prehiter v odzivu. Topla, preprosta gesta lahko pove več kot dolga razlaga.",work:"Najprej dokončaj pomembno nalogo, nato se posveti novim idejam. Pri denarju se izogibaj impulzivnim odločitvam.",well:"Privošči si sprehod, nekaj raztezanja ali kratek odmik od zaslonov.",thought:"Vztrajnost je moč, ko jo spremlja prožnost.",color:"Gozdno zelena",hour:"14:00–16:00",focus:"Uravnotežen napredek"},
+{daily:"Današnji dan je priložnost, da opaziš, kaj ti daje občutek varnosti in kaj te po nepotrebnem zadržuje. Zaupaj svojemu občutku, vendar mu dodaj praktičen načrt.",love:"Poslušaj brez predvidevanja. Jasno izražene potrebe lahko poglobijo bližino.",work:"Dobra energija za načrtovanje, urejanje in pregled dolgoročnih ciljev. Ne sprejemaj odločitev pod pritiskom.",well:"Uravnoteži aktivnost s počitkom; telo ti bo hvaležno za rutino.",thought:"Mirna odločnost premaga naglico.",color:"Topla zlata",hour:"10:00–12:00",focus:"Jasnost in potrpežljivost"},
+{daily:"Morda se pojavi nova ideja ali drugačen pogled na staro vprašanje. Dovoli si raziskovati, ne da bi moral takoj poznati končni odgovor.",love:"Ne skrivaj nežnosti za praktičnostjo. Majhna pozornost lahko polepša dan.",work:"Razmisli o novi možnosti, a preveri podrobnosti, preden se zavežeš.",well:"Svež zrak in nekaj gibanja pomagata sprostiti napetost.",thought:"Priložnost se pogosto začne z radovednostjo.",color:"Temno modra",hour:"16:00–18:00",focus:"Radovednost"}
+];
+const d=new Date(), key=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000);
+const r=readings[((key%readings.length)+readings.length)%readings.length];
+document.getElementById("today").textContent=new Intl.DateTimeFormat("sl-SI",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(d);
+for(const id of ["daily","love","work","well","thought","color","hour","focus"])document.getElementById(id).textContent=r[id];
+const nums=[1,5,7,9,14,24].map(n=>(n+key%9-1+90)%90+1).sort((a,b)=>a-b);
+document.getElementById("numbers").innerHTML=nums.map(n=>`<span class="num">${n}</span>`).join("");
+document.getElementById("bonus").textContent=(33+key%9-1+90)%90+1;
+if("serviceWorker" in navigator && location.protocol!=="file:"){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").then(()=>document.getElementById("status").textContent="Offline podpora aktivna").catch(()=>document.getElementById("status").textContent="Spletni način"));
+}else{
+  document.getElementById("status").textContent="Lokalna različica";
+}
+</script>
+</body>
+</html>
