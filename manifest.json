@@ -1,14 +1,12 @@
 {
   "name": "Moj dnevni horoskop",
   "short_name": "Horoskop",
-  "description": "Osebni dnevni horoskop v slovenščini",
+  "description": "Osebni dnevni horoskop in srečne številke v slovenščini",
   "lang": "sl",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#10121e",
   "theme_color": "#10121e",
-  "icons": [
-    {"src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
-  ]
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }

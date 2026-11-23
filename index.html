@@ -29,8 +29,9 @@ p{margin:.45rem 0}
 .pill b{display:block;color:var(--gold);font-size:.9rem}
 .pill span{font-size:.82rem;color:var(--muted)}
 .numbers{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:14px 0}
-.num{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#34314b;border:1px solid var(--gold);font-weight:700;color:#fff}
-.bonus{color:var(--gold);text-align:center}
+.num{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#245b43;border:1px solid #8ac7a6;font-weight:700;color:#fff;font-size:1.05rem}
+.extra-num{background:#8a6727;border-color:#f0d28c}
+.number-label{color:var(--muted);font-size:.86rem;text-align:center;margin-top:4px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tile{padding:12px;border-radius:14px;background:#141727;border:1px solid var(--line)}
 .tile small{display:block;color:var(--muted)}
@@ -55,7 +56,7 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:12px}
 <div class="pill"><b>🌙 Oven*</b><span>Luna</span></div>
 <div class="pill"><b>⬆️ Rak*</b><span>Ascendent</span></div>
 </div>
-<p style="color:var(--muted);font-size:.82rem">Rojstvo: 1. 5. 1981, 09:05 · Ljubljana. *Postavitve so približne; za popolno natančnost jih je treba preveriti z astrološkim izračunom.</p>
+<p style="color:var(--muted);font-size:.82rem">Rojstvo: 1. 5. 1981, 09:05 · Ljubljana. *Postavitve so približne in zahtevajo natančen astrološki izračun.</p>
 </section>
 <section class="card">
 <h2>🔮 Sporočilo dneva</h2>
@@ -67,8 +68,10 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:12px}
 </section>
 <section class="card">
 <h2>🍀 Srečne številke</h2>
-<div class="numbers" id="numbers"></div>
-<p class="bonus">Dodatna številka: <strong id="bonus"></strong></p>
+<p class="number-label">5 številk od 1 do 50</p>
+<div class="numbers" id="mainNumbers"></div>
+<p class="number-label">Dodatni 2 številki od 1 do 12</p>
+<div class="numbers" id="extraNumbers"></div>
 </section>
 <section class="card">
 <h2>🌈 Dnevni simboli</h2>
@@ -91,14 +94,18 @@ const d=new Date(), key=Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDa
 const r=readings[((key%readings.length)+readings.length)%readings.length];
 document.getElementById("today").textContent=new Intl.DateTimeFormat("sl-SI",{weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(d);
 for(const id of ["daily","love","work","well","thought","color","hour","focus"])document.getElementById(id).textContent=r[id];
-const nums=[1,5,7,9,14,24].map(n=>(n+key%9-1+90)%90+1).sort((a,b)=>a-b);
-document.getElementById("numbers").innerHTML=nums.map(n=>`<span class="num">${n}</span>`).join("");
-document.getElementById("bonus").textContent=(33+key%9-1+90)%90+1;
-if("serviceWorker" in navigator && location.protocol!=="file:"){
-  window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").then(()=>document.getElementById("status").textContent="Offline podpora aktivna").catch(()=>document.getElementById("status").textContent="Spletni način"));
-}else{
-  document.getElementById("status").textContent="Lokalna različica";
+// Deterministična dnevna kombinacija: 5 unikatnih števil 1–50 in 2 unikatni 1–12.
+function makeNumbers(seed,count,max){
+ const set=new Set(); let x=seed;
+ while(set.size<count){x=(x*9301+49297)%233280;set.add(Math.floor(x/233280*max)+1)}
+ return [...set].sort((a,b)=>a-b);
 }
+const main=makeNumbers(key+1981,5,50), extra=makeNumbers(key+501,2,12);
+document.getElementById("mainNumbers").innerHTML=main.map(n=>`<span class="num">${n}</span>`).join("");
+document.getElementById("extraNumbers").innerHTML=extra.map(n=>`<span class="num extra-num">${n}</span>`).join("");
+if("serviceWorker" in navigator && location.protocol!=="file:"){
+ window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").then(()=>document.getElementById("status").textContent="Offline podpora aktivna").catch(()=>document.getElementById("status").textContent="Spletni način"));
+}else{document.getElementById("status").textContent="Lokalna različica";}
 </script>
 </body>
 </html>
